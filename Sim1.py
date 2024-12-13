@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+throughputList = []
+maxNumberOfNodes = 150
+
 
 def sim():
-
-    maxNumberOfNodes = 200
     gTime = 0.4
     broadcast = 7
     headerSize = 2
@@ -13,9 +14,10 @@ def sim():
     packetAirtime = 11.6
     lampda = 1/10**3
 
-    maxThroughPerTimeSlot = (headerSize + packetSize) / packetAirtime
-    maxThroughForPeriode = maxThroughPerTimeSlot * timeSlots
     periodeTime = broadcast + (gTime + packetAirtime) * timeSlots
+    maxThroughPerTimeSlot = (headerSize + packetSize) / packetAirtime
+    maxThroughForPeriode = (
+        (maxThroughPerTimeSlot * timeSlots) / periodeTime) * 8
 
     print(f"{maxThroughPerTimeSlot=}")
     print(f"{maxThroughForPeriode=}")
@@ -50,9 +52,17 @@ def sim():
 
         print(f"{throughPuttimeslot=}")
 
-        throughput = (throughPuttimeslot * timeSlots)
-
+        throughput = ((throughPuttimeslot * timeSlots) / periodeTime) * 8
+        throughputList.append(throughput)
         print(f"{throughput=}")
+
+    x = list(range(1, maxNumberOfNodes))
+    y = throughputList
+    print(f"{x=}, {y=}")
+    plt.plot(x, y)
+    plt.axhline(maxThroughForPeriode, linestyle="dashed",
+                label="Max Throughput", color="red")
+    plt.show()
 
 
 if __name__ == "__main__":
